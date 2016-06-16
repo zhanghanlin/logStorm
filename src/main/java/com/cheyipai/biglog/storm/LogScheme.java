@@ -31,6 +31,6 @@ public class LogScheme implements Scheme {
 
     @Override
     public Fields getOutputFields() {
-        return new Fields(BeanUtils.getFields(new BigLog()));
+        return new Fields(BeanUtils.getFieldNames(BigLog.class));
     }
 }

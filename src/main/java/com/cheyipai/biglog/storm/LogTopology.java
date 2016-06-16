@@ -1,5 +1,6 @@
 package com.cheyipai.biglog.storm;
 
+import com.cheyipai.biglog.bolt.LogHBaseBolt;
 import com.cheyipai.biglog.kafka.KafkaSpoutFactory;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;

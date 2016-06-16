@@ -14,9 +14,9 @@ public class BeanUtils {
 
     static final Logger LOG = LoggerFactory.getLogger(BeanUtils.class);
 
-    public static List<String> getFields(Object t) {
+    public static List<String> getFieldNames(Class clz) {
         List<String> fields = Lists.newArrayList();
-        List<Field> list = getFields(t.getClass());
+        List<Field> list = getFields(clz);
         for (Field f : list) {
             if (Modifier.isStatic(f.getModifiers())) {
                 continue;
