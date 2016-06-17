@@ -10,28 +10,8 @@
             <pattern>%d %-1level %logger[%file:%line] - %msg %n</pattern>
         </encoder>
     </appender>
-    <logger name="com.cheyipai" additivity="false">
-        <level value="INFO"/>
-        <appender-ref ref="Console"/>
-    </logger>
-    <logger name="org.apache">
-        <level value="WARN"/>
-        <appender-ref ref="Console"/>
-    </logger>
-    <logger name="org.apache.curator.framework.state.ConnectionStateManager">
-        <level value="ERROR"/>
-        <appender-ref ref="Console"/>
-    </logger>
-    <logger name="backtype.storm">
-        <level value="WARN"/>
-        <appender-ref ref="Console"/>
-    </logger>
-    <logger name="storm.kafka">
-        <level value="ERROR"/>
-        <appender-ref ref="Console"/>
-    </logger>
     <!-- Console -->
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="Console"/>
     </root>
 </configuration>
