@@ -2,13 +2,16 @@ package com.cheyipai.biglog.utils;
 
 public class Prop {
 
+    public static final String spoutName = "spout";
+    public static final String boltName = "hbaseBolt";
+    public static final String table_name_prefix = "big_log_";
+    public static final String family_name = "LD";
+
     public static String zkHosts;
     public static String kafkaBorkerHosts;
     public static String zkRoot;
     public static String topic;
     public static String spoutId;
-    public static final String spoutName = "spout";
-    public static final String boltName = "hbaseBolt";
     public static String topologyName;
     public static Integer spoutNum;
     public static Integer boltNum;

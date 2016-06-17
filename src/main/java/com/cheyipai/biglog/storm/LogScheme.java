@@ -22,7 +22,7 @@ public class LogScheme implements Scheme {
         byte[] bytes = Utils.toByteArray(buffer);
         Object obj = Convert.byte2Object(bytes);
         if (obj instanceof BigLog) {
-            return new Values(BeanUtils.getFieldValues(obj).toArray());
+            return new Values(BeanUtils.getBeanValue(obj).toArray());
         } else {
             LOG.error("Object is not an instance of BigLog.");
             return null;
@@ -31,6 +31,6 @@ public class LogScheme implements Scheme {
 
     @Override
     public Fields getOutputFields() {
-        return new Fields(BeanUtils.getFieldNames(BigLog.class));
+        return new Fields(BeanUtils.getBeanField(BigLog.class));
     }
 }

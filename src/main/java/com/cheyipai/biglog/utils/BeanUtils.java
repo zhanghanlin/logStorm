@@ -1,10 +1,12 @@
 package com.cheyipai.biglog.utils;
 
+import com.cheyipai.biglog.model.BigLog;
 import com.google.common.collect.Lists;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -12,9 +14,7 @@ import java.util.List;
 
 public class BeanUtils {
 
-    static final Logger LOG = LoggerFactory.getLogger(BeanUtils.class);
-
-    public static List<String> getFieldNames(Class clz) {
+    public static List<String> getBeanField(Class clz) {
         List<String> fields = Lists.newArrayList();
         List<Field> list = getFields(clz);
         for (Field f : list) {
@@ -26,7 +26,7 @@ public class BeanUtils {
         return fields;
     }
 
-    private static List<Field> getFields(Class clz) {
+    public static List<Field> getFields(Class clz) {
         List<Field> list = Lists.newArrayList();
         list.addAll(Arrays.asList(clz.getDeclaredFields()));
         if (clz.getGenericSuperclass() != null) {
@@ -35,25 +35,51 @@ public class BeanUtils {
         return list;
     }
 
-
-    public static List<Object> getFieldValues(Object t) {
+    public static <T> List<Object> getBeanValue(T t) {
         List<Object> values = Lists.newArrayList();
         List<Field> list = getFields(t.getClass());
         for (Field field : list) {
-            String methodName = "get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
             try {
                 if (Modifier.isStatic(field.getModifiers())) {
                     continue;
                 }
-                Method method = t.getClass().getMethod(methodName);
+                PropertyDescriptor descriptor = new PropertyDescriptor(field.getName(), t.getClass());
+                Method method = descriptor.getReadMethod();
                 Object o = method.invoke(t);
                 if (null != o) {
                     values.add(o);
                 }
-            } catch (Exception e) {
-                LOG.error("error:{}", e.getMessage(), e);
+            } catch (IntrospectionException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
             }
         }
         return values;
+    }
+
+    public static <T> Object getBeanValue(String field, T t) {
+        try {
+            PropertyDescriptor descriptor = new PropertyDescriptor(field, t.getClass());
+            Method method = descriptor.getReadMethod();
+            return method.invoke(t);
+        } catch (IntrospectionException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void main(String[] args) {
+        BigLog bigLog = new BigLog("app", "1", "456", DateUtils.getTimeStamp(), "加价200", 1);
+        for (String f : bigLog.getFields()) {
+            Object value = bigLog.get(f);
+            System.out.println(f + "=" + value);
+        }
     }
 }

@@ -1,9 +1,13 @@
 package com.cheyipai.biglog.hbase;
 
+import com.cheyipai.biglog.model.BigLog;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
-import org.apache.hadoop.hbase.client.*;
+import org.apache.hadoop.hbase.client.HBaseAdmin;
+import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
@@ -18,11 +22,14 @@ public class HBaseCommunicator {
     private HTable table = null;
     private Put putData = null;
     private HBaseAdmin admin = null;
-    private Get getRowObj = null;
-    private Result rowEntries = null;
 
-    public HBaseCommunicator(final Configuration conf) {
-        this.conf = conf;
+    public HBaseCommunicator() {
+        this.conf = HBaseConfiguration.create();
+        try {
+            admin = new HBaseAdmin(conf);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /*
@@ -30,7 +37,6 @@ public class HBaseCommunicator {
      */
     public final boolean tableExists(final String tableName) {
         try {
-            admin = new HBaseAdmin(conf);
             if (admin.tableExists(tableName)) {
                 return true;
             }
@@ -46,13 +52,12 @@ public class HBaseCommunicator {
      */
     public final void createTable(final String tableName, final ArrayList<String> colFamilies) {
         try {
-            HBaseAdmin hbase = new HBaseAdmin(conf);
             HTableDescriptor desc = new HTableDescriptor(tableName);
             for (int i = 0; i < colFamilies.size(); i++) {
                 HColumnDescriptor meta = new HColumnDescriptor(colFamilies.get(i).getBytes());
                 desc.addFamily(meta);
             }
-            hbase.createTable(desc);
+            admin.createTable(desc);
         } catch (Exception e) {
             System.out.println("Exception occured creating table in hbase");
             e.printStackTrace();
@@ -78,7 +83,7 @@ public class HBaseCommunicator {
                         colValue = data.get(i).get(j);
                         if (colValue.equals(null))
                             colValue = "null";
-                        putData.add(Bytes.toBytes(colFamilyName), Bytes.toBytes(colNames.get(i).get(j)),
+                        putData.addColumn(Bytes.toBytes(colFamilyName), Bytes.toBytes(colNames.get(i).get(j)),
                                 Bytes.toBytes(colValue));
                     }
                     table.put(putData);
@@ -89,32 +94,22 @@ public class HBaseCommunicator {
         }
     }
 
-    public final void addRow(String tableName,Put put) {
+    public final void addRow(String tableName, String columnFamily, BigLog bigLog) {
         try {
             table = new HTable(conf, tableName);
+            Put put = constructRow(columnFamily, bigLog);
             table.put(put);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    /*
-     * obtain value of the column of an hbase table
-     */
-    public final String getColEntry(final String tableName, final String rowKey,
-                                    final String colFamilyName, final String colName) {
-        result = null;
-        try {
-            HTable table = new HTable(conf, tableName);
-            key = Bytes.toBytes(rowKey);
-            getRowObj = new Get(key);
-            rowEntries = table.get(getRowObj);
-            columnValue = rowEntries.getValue(Bytes.toBytes(colFamilyName),
-                    Bytes.toBytes(colName));
-            result = Bytes.toString(columnValue);
-        } catch (IOException e) {
-            System.out.println("Exception occured in retrieving data");
+    private final Put constructRow(String columnFamily, BigLog bigLog) {
+        String rowKey = bigLog.getUserId() + bigLog.getDate() + bigLog.getLine() + bigLog.getType();
+        Put put = new Put(Bytes.toBytes(rowKey));
+        for (String f : bigLog.getFields()) {
+            put.addColumn(Bytes.toBytes(columnFamily), Bytes.toBytes(f), Bytes.toBytes(bigLog.get(f).toString()));
         }
-        return result;
+        return put;
     }
 }
