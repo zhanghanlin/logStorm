@@ -19,18 +19,25 @@ public class BigLog extends Entity {
     private long date;  //日志时间
     private String content; //日志内容
     private int type;   //用户操作类型    加价等操作
+    private String serverName;  //服务器名
+    private String serverIp;    //服务器IP
+
 
     public BigLog() {
         super();
     }
 
-    public BigLog(String app, String line, String userId, long date, String content, int type) {
+    public BigLog(String app, String line, String userId,
+                  long date, String content, int type,
+                  String serverName, String serverIp) {
         this.app = app;
         this.line = line;
         this.userId = userId;
         this.date = date;
         this.content = content;
         this.type = type;
+        this.serverName = serverName;
+        this.serverIp = serverIp;
     }
 
     public String getApp() {
@@ -81,6 +88,22 @@ public class BigLog extends Entity {
         this.type = type;
     }
 
+    public String getServerName() {
+        return serverName;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
+    }
+
+    public String getServerIp() {
+        return serverIp;
+    }
+
+    public void setServerIp(String serverIp) {
+        this.serverIp = serverIp;
+    }
+
     @Override
     public String getRowKey() {
         return userId + date + line + type;
@@ -95,8 +118,10 @@ public class BigLog extends Entity {
         rowCols.add("date");
         rowCols.add("line");
         rowCols.add("type");
-        colCols.add("app");
+        rowCols.add("app");
+        rowCols.add("serverIp");
         colCols.add("content");
+        colCols.add("serverName");
         map.put(row_family, rowCols);
         map.put(col_family, colCols);
         return map;

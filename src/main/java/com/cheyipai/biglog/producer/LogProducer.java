@@ -9,8 +9,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.util.Date;
 import java.util.Properties;
+import java.util.UUID;
 
 import static com.cheyipai.biglog.utils.Prop.kafkaBorkerHosts;
 import static com.cheyipai.biglog.utils.Prop.topic;
@@ -19,7 +21,12 @@ public class LogProducer {
 
     public static void main(String args[]) throws InterruptedException, IOException {
         Producer<String, byte[]> producer = getProducer();
-        BigLog testData = new BigLog("app6", "1", "test2", (new Date()).getTime(), "加价2500", 1);
+        //=========
+        InetAddress s = InetAddress.getLocalHost();
+        //=========
+        BigLog testData = new BigLog("app-producer-2", "1", UUID.randomUUID().toString().substring(0, 8),
+                (new Date()).getTime(), "{\"key\":\"testkey\",\"value\":\"testvalue\"}", 1,
+                s.getHostName(), s.getHostAddress());
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutput out = null;
         byte[] testData_bytes = null;
