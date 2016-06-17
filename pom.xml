@@ -7,19 +7,31 @@
     <artifactId>logStorm</artifactId>
     <packaging>jar</packaging>
     <version>1.0</version>
+    <!-- 版本配置 -->
+    <properties>
+        <jdk.version>1.7</jdk.version>
+        <plugin.compiler.version>2.5.1</plugin.compiler.version>
+        <plugin.shade.verison>1.4</plugin.shade.verison>
+        <fastjson.version>1.2.6</fastjson.version>
+        <spring.version>4.2.5.RELEASE</spring.version>
+        <slf4j-log4j12.version>1.7.7</slf4j-log4j12.version>
+        <logback.version>1.1.1</logback.version>
+        <storm.version>1.0.0</storm.version>
+        <kafka.version>0.8.2.2</kafka.version>
+        <hbase-client.version>1.2.0</hbase-client.version>
+        <hadoop-hdfs.version>2.4.0</hadoop-hdfs.version>
+        <main.class>com.cheyipai.biglog.BootStrap</main.class>
+    </properties>
     <dependencies>
-        <!-- Main -->
         <dependency>
             <groupId>org.apache.storm</groupId>
             <artifactId>storm-kafka</artifactId>
-            <!--<version>0.9.2-incubating</version>-->
-            <version>1.0.0</version>
+            <version>${storm.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.storm</groupId>
             <artifactId>storm-core</artifactId>
-            <!--<version>0.9.2-incubating</version>-->
-            <version>1.0.0</version>
+            <version>${storm.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -34,8 +46,7 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.10</artifactId>
-            <!--<version>0.8.1.1</version>-->
-            <version>0.8.2.2</version>
+            <version>${kafka.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.zookeeper</groupId>
@@ -50,7 +61,7 @@
         <dependency>
             <groupId>org.apache.hbase</groupId>
             <artifactId>hbase-client</artifactId>
-            <version>1.2.0</version>
+            <version>${hbase-client.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -62,16 +73,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.apache.hadoop</groupId>-->
-            <!--<artifactId>hadoop-core</artifactId>-->
-            <!--<version>1.2.0</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.apache.hadoop</groupId>-->
-            <!--<artifactId>hadoop-hdfs</artifactId>-->
-            <!--<version>2.2.0</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs</artifactId>
+            <version>${hadoop-hdfs.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
@@ -133,7 +139,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>1.4</version>
+                <version>${plugin.shade.verison}</version>
                 <configuration>
                     <createDependencyReducedPom>true</createDependencyReducedPom>
                     <filters>
@@ -160,7 +166,7 @@
                                 </transformer>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.cheyipai.biglog.BootStrap</mainClass>
+                                    <mainClass>${main.class}</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
@@ -169,29 +175,4 @@
             </plugin>
         </plugins>
     </build>
-    <!-- 版本配置 -->
-    <properties>
-        <!-- common version -->
-        <jdk.version>1.7</jdk.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- plugin version -->
-        <plugin.compiler.version>2.5.1</plugin.compiler.version>
-        <plugin.war.version>2.3</plugin.war.version>
-        <plugin.resources.version>2.6</plugin.resources.version>
-        <plugin.install.version>2.4</plugin.install.version>
-        <plugin.clean.version>2.5</plugin.clean.version>
-        <plugin.antrun.version>1.7</plugin.antrun.version>
-        <plugin.dependency.version>2.5.1</plugin.dependency.version>
-        <plugin.surefire.version>2.7.2</plugin.surefire.version>
-        <!-- jar version -->
-        <junit.version>4.11</junit.version>
-        <fastjson.version>1.2.6</fastjson.version>
-        <spring.version>4.2.5.RELEASE</spring.version>
-        <slf4j-log4j12.version>1.7.7</slf4j-log4j12.version>
-        <log4j.version>1.2.17</log4j.version>
-        <logback.version>1.1.1</logback.version>
-        <jstl.version>1.2</jstl.version>
-        <servlet-api.version>2.5</servlet-api.version>
-        <aspectj.version>1.7.4</aspectj.version>
-    </properties>
 </project>

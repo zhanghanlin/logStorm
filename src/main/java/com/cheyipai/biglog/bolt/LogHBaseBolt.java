@@ -52,7 +52,6 @@ public class LogHBaseBolt implements IRichBolt {
     @Override
     public void execute(Tuple tuple) {
         BigLog bigLog = Convert.tuple2Bean(tuple, new BigLog());
-        LOG.info("LogHBaseBolt-execute : {}", bigLog.toJson());
         if (LOG.isDebugEnabled()) {
             LOG.debug("LogHBaseBolt-execute : {}", bigLog.toJson());
         }
