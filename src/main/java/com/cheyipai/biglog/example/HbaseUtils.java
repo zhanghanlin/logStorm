@@ -47,7 +47,7 @@ public class HbaseUtils {
             HBaseAdmin admin = new HBaseAdmin(configuration);
             admin.disableTable(tableName);
             admin.deleteTable(tableName);
-            System.out.println("删除表" + tableName + "成功");
+            LOG.info("删除表" + tableName + "成功");
         } catch (MasterNotRunningException e) {
             e.printStackTrace();
         } catch (ZooKeeperConnectionException e) {
@@ -70,7 +70,7 @@ public class HbaseUtils {
             Delete delete = new Delete(rowKey.getBytes());
             list.add(delete);
             table.delete(list);
-            System.out.println("删除行" + rowKey + "成功!");
+            LOG.info("删除行" + rowKey + "成功!");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -168,7 +168,7 @@ public class HbaseUtils {
             sb.append(",value:");
             sb.append(new String(cell.getValue()));
         }
-        System.out.println(sb.toString());
+        LOG.info(sb.toString());
     }
 
     public static void main(String[] args) {

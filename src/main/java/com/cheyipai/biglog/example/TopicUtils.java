@@ -48,13 +48,4 @@ public class TopicUtils {
     public static void command(String[] options) {
         TopicCommand.main(options);
     }
-
-    public static void main(String[] args) {
-        System.out.println("list:");
-        list();
-        System.out.println("describe:");
-        describe("topic3");
-//        System.out.println("create:");
-//        create("topic3");
-    }
 }

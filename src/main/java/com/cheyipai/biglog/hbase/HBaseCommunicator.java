@@ -48,7 +48,7 @@ public class HBaseCommunicator implements Serializable {
                 return true;
             }
         } catch (Exception e) {
-            System.out.println("Exception occured while checking table's existence");
+            LOG.error("exception while checking table's existence! error : {}", e.getMessage(), e);
             e.printStackTrace();
         }
         return false;
@@ -63,22 +63,22 @@ public class HBaseCommunicator implements Serializable {
                 return;
             }
             HTableDescriptor desc = new HTableDescriptor(tableName);
-            for (int i = 0; i < colFamilies.size(); i++) {
-                HColumnDescriptor meta = new HColumnDescriptor(colFamilies.get(i).getBytes());
+            for (String family : colFamilies) {
+                HColumnDescriptor meta = new HColumnDescriptor(family.getBytes());
                 desc.addFamily(meta);
             }
             admin.createTable(desc);
             LOG.info("create table : {} success!", tableName);
         } catch (Exception e) {
-            System.out.println("Exception occured creating table in hbase");
+            LOG.error("Exception creating table in HBase! error : {} ", e.getMessage(), e);
             e.printStackTrace();
         }
     }
 
-    public final void addRow(String columnFamily, Entity t) {
+    public final void addRow(Entity t) {
         try {
             table = new HTable(conf, getNowTName());
-            Put put = constructRow(columnFamily, t);
+            Put put = constructRow(t);
             table.put(put);
         } catch (IOException e) {
             e.printStackTrace();
@@ -88,14 +88,16 @@ public class HBaseCommunicator implements Serializable {
     /**
      * 根据Bean格式Put
      *
-     * @param columnFamily
+     * @param t
      * @return
      */
-    private final Put constructRow(String columnFamily, Entity t) {
-        String rowKey = t.getRowKey();
-        Put put = new Put(Bytes.toBytes(rowKey));
-        for (String f : t.getFields()) {
-            put.addColumn(Bytes.toBytes(columnFamily), Bytes.toBytes(f), Bytes.toBytes(t.get(f).toString()));
+    private final Put constructRow(Entity t) {
+        Put put = new Put(Bytes.toBytes(t.getRowKey()));
+        for (Map.Entry<String, List<String>> entry : t.getFamily().entrySet()) {
+            String columnFamily = entry.getKey();
+            for (String f : entry.getValue()) {
+                put.addColumn(Bytes.toBytes(columnFamily), Bytes.toBytes(f), Bytes.toBytes(t.get(f).toString()));
+            }
         }
         return put;
     }
@@ -107,7 +109,8 @@ public class HBaseCommunicator implements Serializable {
         createLock.lock();
         try {
             ArrayList<String> colFamilies = Lists.newArrayList();
-            colFamilies.add(family_name);
+            colFamilies.add(row_family);
+            colFamilies.add(col_family);
             createTable(getNowTName(), colFamilies);
         } catch (Exception e) {
             e.printStackTrace();
@@ -157,7 +160,8 @@ public class HBaseCommunicator implements Serializable {
                 String table_name = table_name_prefix + DateUtils.getMonthDate();
                 String table_name_next = table_name_prefix + DateUtils.getMonthDate(1);
                 ArrayList<String> colFamilies = Lists.newArrayList();
-                colFamilies.add(family_name);
+                colFamilies.add(row_family);
+                colFamilies.add(col_family);
                 createTable(table_name, colFamilies);
                 createTable(table_name_next, colFamilies);
             } catch (Exception e) {

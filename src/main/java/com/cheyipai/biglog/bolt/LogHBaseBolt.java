@@ -15,8 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-import static com.cheyipai.biglog.utils.Global.family_name;
-
 public class LogHBaseBolt implements IRichBolt {
 
     private static final long serialVersionUID = 8259058888219739163L;
@@ -40,9 +38,9 @@ public class LogHBaseBolt implements IRichBolt {
             LOG.debug("LogHBaseBolt-execute : {}", bigLog.toJson());
         }
         try {
-            communicator.addRow(family_name, bigLog);
+            communicator.addRow(bigLog);
         } catch (Exception e) {
-            LOG.error("	Error inserting event into HBase table ", e);
+            LOG.error("exception insert HBase table! error : {} ", e.getMessage(), e);
         }
         collector.ack(tuple);
     }

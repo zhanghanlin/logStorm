@@ -1,5 +1,14 @@
 package com.cheyipai.biglog.model;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+import java.util.List;
+import java.util.Map;
+
+import static com.cheyipai.biglog.utils.Global.col_family;
+import static com.cheyipai.biglog.utils.Global.row_family;
+
 public class BigLog extends Entity {
 
     private static final long serialVersionUID = -7637218139941572984L;
@@ -75,5 +84,21 @@ public class BigLog extends Entity {
     @Override
     public String getRowKey() {
         return userId + date + line + type;
+    }
+
+    @Override
+    public Map<String, List<String>> getFamily() {
+        Map<String, List<String>> map = Maps.newConcurrentMap();
+        List<String> rowCols = Lists.newArrayList();
+        List<String> colCols = Lists.newArrayList();
+        rowCols.add("userId");
+        rowCols.add("date");
+        rowCols.add("line");
+        rowCols.add("type");
+        colCols.add("app");
+        colCols.add("content");
+        map.put(row_family, rowCols);
+        map.put(col_family, colCols);
+        return map;
     }
 }
