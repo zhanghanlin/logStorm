@@ -19,7 +19,7 @@ public class LogProducer {
 
     public static void main(String args[]) throws InterruptedException, IOException {
         Producer<String, byte[]> producer = getProducer();
-        BigLog testData = new BigLog("app", "1", "456", (new Date()).getTime(), "加价200", 1);
+        BigLog testData = new BigLog("app3", "1", "abc", (new Date()).getTime(), "加价200", 1);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutput out = null;
         byte[] testData_bytes = null;

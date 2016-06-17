@@ -1,6 +1,5 @@
 package com.cheyipai.biglog.utils;
 
-import com.cheyipai.biglog.model.BigLog;
 import com.google.common.collect.Lists;
 
 import java.beans.IntrospectionException;
@@ -73,13 +72,5 @@ public class BeanUtils {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public static void main(String[] args) {
-        BigLog bigLog = new BigLog("app", "1", "456", DateUtils.getTimeStamp(), "加价200", 1);
-        for (String f : bigLog.getFields()) {
-            Object value = bigLog.get(f);
-            System.out.println(f + "=" + value);
-        }
     }
 }

@@ -11,7 +11,8 @@ public class Global {
     /**
      * 同步锁
      */
-    public final static Lock lock = new ReentrantLock();
+    public final static Lock createLock = new ReentrantLock();
+    public final static Lock taskLock = new ReentrantLock();
     public static final String spoutName = "spout";
     public static final String boltName = "hbaseBolt";
     public static final String table_name_prefix = "big_log_";

@@ -71,4 +71,9 @@ public class BigLog extends Entity {
     public void setType(int type) {
         this.type = type;
     }
+
+    @Override
+    public String getRowKey() {
+        return userId + date + line + type;
+    }
 }

@@ -1,26 +1,26 @@
 package com.cheyipai.biglog.example;
 
-import com.cheyipai.biglog.utils.DateUtils;
-import com.google.common.collect.Lists;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.*;
+import org.apache.hadoop.hbase.Cell;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.MasterNotRunningException;
+import org.apache.hadoop.hbase.ZooKeeperConnectionException;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.filter.CompareFilter;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.SingleColumnValueFilter;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-import static com.cheyipai.biglog.utils.Global.family_name;
-import static com.cheyipai.biglog.utils.Global.table_name_prefix;
 
 public class HbaseUtils {
+
+    static final Logger LOG = LoggerFactory.getLogger(HbaseUtils.class);
 
     static Configuration configuration = HBaseConfiguration.create();
 
@@ -36,40 +36,6 @@ public class HbaseUtils {
     }
 
     static ResultScanner rs = null;
-
-    static final Lock lock = new ReentrantLock();
-
-    public static final void createTask() {
-        lock.lock();
-        try {
-            String table_name = table_name_prefix + DateUtils.getMonthDate();
-            String table_name_next = table_name_prefix + DateUtils.getMonthDate(1);
-            ArrayList<String> colFamilies = Lists.newArrayList();
-            colFamilies.add(family_name);
-            createTable(table_name, colFamilies);
-            createTable(table_name_next, colFamilies);
-            System.out.println("create table success!");
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    /**
-     * creates a table
-     */
-    static final void createTable(final String tableName, final ArrayList<String> colFamilies) throws IOException {
-        if (admin.tableExists(tableName)) {
-            return;
-        }
-        HTableDescriptor desc = new HTableDescriptor(tableName);
-        for (int i = 0; i < colFamilies.size(); i++) {
-            HColumnDescriptor meta = new HColumnDescriptor(colFamilies.get(i).getBytes());
-            desc.addFamily(meta);
-        }
-        admin.createTable(desc);
-    }
 
     /**
      * 删除一张表
