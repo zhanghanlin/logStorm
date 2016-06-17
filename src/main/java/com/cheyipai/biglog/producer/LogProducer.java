@@ -24,7 +24,7 @@ public class LogProducer {
         //=========
         InetAddress s = InetAddress.getLocalHost();
         //=========
-        BigLog testData = new BigLog("app-producer-2", "1", UUID.randomUUID().toString().substring(0, 8),
+        BigLog testData = new BigLog("app-producer-3", "1", UUID.randomUUID().toString().substring(0, 8),
                 (new Date()).getTime(), "{\"key\":\"testkey\",\"value\":\"testvalue\"}", 1,
                 s.getHostName(), s.getHostAddress());
         ByteArrayOutputStream bos = new ByteArrayOutputStream();

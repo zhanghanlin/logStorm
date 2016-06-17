@@ -10,7 +10,6 @@
         <Logger name="org.apache.zookeeper" level="WARN"/>
         <Logger name="org.apache.storm" level="WARN"/>
         <Logger name="org.apache.curator" level="WARN"/>
-        <Logger name="org.apache.hadoop" level="WARN"/>
         <Root level="INFO">
             <AppenderRef ref="Console"/>
         </Root>
