@@ -1,9 +1,7 @@
 package com.cheyipai.biglog.utils;
 
-import com.google.common.collect.Maps;
-import org.apache.commons.lang.StringUtils;
-
-import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 全局配置类
@@ -11,24 +9,13 @@ import java.util.Map;
 public class Global {
 
     /**
-     * 保存全局属性值
+     * 同步锁
      */
-    private static Map<String, String> map = Maps.newHashMap();
+    public final static Lock lock = new ReentrantLock();
+    public static final String spoutName = "spout";
+    public static final String boltName = "hbaseBolt";
+    public static final String table_name_prefix = "big_log_";
+    public static final String family_name = "LD";
+    public static final String prop_file = "storm.properties";
 
-    /**
-     * 属性文件加载对象
-     */
-    private static PropertiesLoader loader = new PropertiesLoader("storm.properties");
-
-    /**
-     * 获取配置
-     */
-    public static String getConfig(String key) {
-        String value = map.get(key);
-        if (value == null) {
-            value = loader.getProperty(key);
-            map.put(key, value != null ? value : StringUtils.EMPTY);
-        }
-        return value;
-    }
 }

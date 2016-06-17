@@ -9,6 +9,7 @@ import org.apache.storm.generated.StormTopology;
 import org.apache.storm.topology.TopologyBuilder;
 import org.apache.storm.utils.Utils;
 
+import static com.cheyipai.biglog.utils.Global.*;
 import static com.cheyipai.biglog.utils.Prop.*;
 
 public class LogTopology {

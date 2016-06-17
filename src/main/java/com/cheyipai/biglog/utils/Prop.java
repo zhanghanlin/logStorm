@@ -1,11 +1,23 @@
 package com.cheyipai.biglog.utils;
 
+import com.google.common.collect.Maps;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Map;
+
+import static com.cheyipai.biglog.utils.Global.prop_file;
+
 public class Prop {
 
-    public static final String spoutName = "spout";
-    public static final String boltName = "hbaseBolt";
-    public static final String table_name_prefix = "big_log_";
-    public static final String family_name = "LD";
+    /**
+     * 保存全局属性值
+     */
+    private static Map<String, String> map = Maps.newHashMap();
+
+    /**
+     * 属性文件加载对象
+     */
+    private static PropertiesLoader loader = new PropertiesLoader(prop_file);
 
     public static String zkHosts;
     public static String kafkaBorkerHosts;
@@ -21,17 +33,29 @@ public class Prop {
     public static Integer workerNum;    //集群中分配多少个进程来运行这个拓扑
 
     static {
-        zkHosts = Global.getConfig("zk.hosts");
-        zkRoot = Global.getConfig("zk.root");
-        topic = Global.getConfig("kafka.topic");
-        spoutId = Global.getConfig("kafka.spout.id");
-        kafkaBorkerHosts = Global.getConfig("kafka.broker.host");
-        topologyName = Global.getConfig("storm.topology.name");
-        spoutNum = Integer.valueOf(Global.getConfig("storm.spout.num"));
-        boltNum = Integer.valueOf(Global.getConfig("storm.bolt.num"));
-        isDebug = Boolean.valueOf(Global.getConfig("storm.debug"));
-        isLocalMode = Boolean.valueOf(Global.getConfig("storm.localmode"));
-        taskParallelism = Integer.valueOf(Global.getConfig("storm.max.taskParallelism"));
-        workerNum = Integer.valueOf(Global.getConfig("storm.worker.num"));
+        zkHosts = getConfig("zk.hosts");
+        zkRoot = getConfig("zk.root");
+        topic = getConfig("kafka.topic");
+        spoutId = getConfig("kafka.spout.id");
+        kafkaBorkerHosts = getConfig("kafka.broker.host");
+        topologyName = getConfig("storm.topology.name");
+        spoutNum = Integer.valueOf(getConfig("storm.spout.num"));
+        boltNum = Integer.valueOf(getConfig("storm.bolt.num"));
+        isDebug = Boolean.valueOf(getConfig("storm.debug"));
+        isLocalMode = Boolean.valueOf(getConfig("storm.localmode"));
+        taskParallelism = Integer.valueOf(getConfig("storm.max.taskParallelism"));
+        workerNum = Integer.valueOf(getConfig("storm.worker.num"));
+    }
+
+    /**
+     * 获取配置
+     */
+    public static String getConfig(String key) {
+        String value = map.get(key);
+        if (value == null) {
+            value = loader.getProperty(key);
+            map.put(key, value != null ? value : StringUtils.EMPTY);
+        }
+        return value;
     }
 }

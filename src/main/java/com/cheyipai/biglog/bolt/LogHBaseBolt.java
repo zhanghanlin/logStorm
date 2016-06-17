@@ -18,8 +18,8 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Map;
 
-import static com.cheyipai.biglog.utils.Prop.family_name;
-import static com.cheyipai.biglog.utils.Prop.table_name_prefix;
+import static com.cheyipai.biglog.utils.Global.family_name;
+import static com.cheyipai.biglog.utils.Global.table_name_prefix;
 
 public class LogHBaseBolt implements IRichBolt {
 
@@ -35,18 +35,10 @@ public class LogHBaseBolt implements IRichBolt {
     @Override
     public void prepare(Map conf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;
-        try {
-            this.communicator = new HBaseCommunicator();
-            table_name = table_name_prefix + DateUtils.getMonthDate();
-            if (!communicator.tableExists(table_name)) {
-                ArrayList<String> fList = Lists.newArrayList(family_name);
-                communicator.createTable(table_name, fList);
-            }
-        } catch (Exception e) {
-            String errMsg = "Error retrieving connection and access to dangerousEventsTable";
-            LOG.error(errMsg, e);
-            throw new RuntimeException(errMsg, e);
-        }
+        this.communicator = new HBaseCommunicator();
+        table_name = table_name_prefix + DateUtils.getMonthDate();
+        ArrayList<String> fList = Lists.newArrayList(family_name);
+        communicator.createTable(table_name, fList);
     }
 
     @Override

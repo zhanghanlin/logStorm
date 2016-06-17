@@ -19,7 +19,15 @@ public class DateUtils {
     }
 
     public static String getMonthDate() {
-        return getDate(formatPattern_month);
+        return getMonthDate(0);
+    }
+
+
+    public static String getMonthDate(int month) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH,month);
+        SimpleDateFormat format = new SimpleDateFormat(formatPattern_month);
+        return format.format(calendar.getTime());
     }
 
     public static String getDate(String pattern) {

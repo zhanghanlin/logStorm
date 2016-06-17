@@ -1,4 +1,4 @@
-package com.cheyipai.biglog.utils;
+package com.cheyipai.biglog.example;
 
 import kafka.admin.TopicCommand;
 
