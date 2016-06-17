@@ -1,6 +1,7 @@
 package com.cheyipai.biglog.kafka;
 
 import com.cheyipai.biglog.storm.LogScheme;
+import kafka.api.OffsetRequest;
 import org.apache.storm.kafka.BrokerHosts;
 import org.apache.storm.kafka.KafkaSpout;
 import org.apache.storm.kafka.SpoutConfig;
@@ -18,6 +19,7 @@ public class KafkaSpoutFactory {
         BrokerHosts brokerHosts = new ZkHosts(zkHosts);
         spoutConfig = new SpoutConfig(brokerHosts, topic, zkRoot, spoutId);
         spoutConfig.scheme = new SchemeAsMultiScheme(new LogScheme());
+        spoutConfig.startOffsetTime = OffsetRequest.LatestTime();
         kafkaSpout = new KafkaSpout(spoutConfig);
     }
 
