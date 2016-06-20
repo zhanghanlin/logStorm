@@ -171,6 +171,5 @@ public class HbaseUtils {
 
     public static void main(String[] args) {
         dropTable(TableName.valueOf("big_log_201606"));
-        dropTable(TableName.valueOf("big_log_201607"));
     }
 }
