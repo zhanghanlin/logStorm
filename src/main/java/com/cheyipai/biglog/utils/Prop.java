@@ -20,6 +20,8 @@ public class Prop {
     private static PropertiesLoader loader = new PropertiesLoader(prop_file);
 
     public static String zkHosts;
+    public static String[] zkOffsetHosts;
+    public static Integer zkOffsetPort;
     public static String kafkaBorkerHosts;
     public static String zkRoot;
     public static String topic;
@@ -34,6 +36,8 @@ public class Prop {
 
     static {
         zkHosts = getConfig("zk.hosts");
+        zkOffsetHosts = getConfig("zk.offset.hosts").split(",");
+        zkOffsetPort = Integer.valueOf(getConfig("zk.offset.port"));
         zkRoot = getConfig("zk.root");
         topic = getConfig("kafka.topic");
         spoutId = getConfig("kafka.spout.id");

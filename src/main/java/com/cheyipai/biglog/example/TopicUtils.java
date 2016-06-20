@@ -48,4 +48,10 @@ public class TopicUtils {
     public static void command(String[] options) {
         TopicCommand.main(options);
     }
+
+    public static void main(String[] args) {
+        if (args != null) {
+            create(args[0]);
+        }
+    }
 }
