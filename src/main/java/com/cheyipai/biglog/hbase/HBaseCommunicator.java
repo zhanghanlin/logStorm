@@ -67,12 +67,19 @@ public class HBaseCommunicator implements Serializable {
     }
 
     public final void addRow(Entity t) {
+        Table table = null;
         try {
-            Table table = conn.getTable(getNowTName());
+            table = conn.getTable(getNowTName());
             Put put = constructRow(t);
             table.put(put);
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                table.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
