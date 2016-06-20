@@ -1,10 +1,7 @@
 package com.cheyipai.biglog.example;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.Cell;
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.MasterNotRunningException;
-import org.apache.hadoop.hbase.ZooKeeperConnectionException;
+import org.apache.hadoop.hbase.*;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.filter.CompareFilter;
 import org.apache.hadoop.hbase.filter.Filter;
@@ -24,12 +21,15 @@ public class HbaseUtils {
 
     static Configuration configuration = HBaseConfiguration.create();
 
-    static HBaseAdmin admin = null;
+    static Admin admin = null;
+
+    static Connection conn = null;
 
     static {
         configuration.addResource("hbase-site.xml");
         try {
-            admin = new HBaseAdmin(configuration);
+            conn = ConnectionFactory.createConnection(configuration);
+            admin = conn.getAdmin();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -42,9 +42,8 @@ public class HbaseUtils {
      *
      * @param tableName
      */
-    public static void dropTable(String tableName) {
+    public static void dropTable(TableName tableName) {
         try {
-            HBaseAdmin admin = new HBaseAdmin(configuration);
             admin.disableTable(tableName);
             admin.deleteTable(tableName);
             LOG.info("删除表" + tableName + "成功");
@@ -63,9 +62,9 @@ public class HbaseUtils {
      *
      * @param rowKey
      */
-    public static void deleteRow(String rowKey, String tableName) {
+    public static void deleteRow(String rowKey, TableName tableName) {
         try {
-            HTable table = new HTable(configuration, tableName);
+            Table table = conn.getTable(tableName);
             List list = new ArrayList();
             Delete delete = new Delete(rowKey.getBytes());
             list.add(delete);
@@ -79,9 +78,9 @@ public class HbaseUtils {
     /**
      * 查询所有数据
      */
-    public static void queryAll(String tableName) {
+    public static void queryAll(TableName tableName) {
         try {
-            HTable table = new HTable(configuration, tableName);
+            Table table = conn.getTable(tableName);
             rs = table.getScanner(new Scan());
             for (Result r : rs) {
                 sysInfo(r);
@@ -96,9 +95,9 @@ public class HbaseUtils {
     /**
      * 单条件查询,根据rowkey查询唯一一条记录
      */
-    public static void queryByCondition(String rowKey, String tableName) {
+    public static void queryByCondition(String rowKey, TableName tableName) {
         try {
-            HTable table = new HTable(configuration, tableName);
+            Table table = conn.getTable(tableName);
             Get scan = new Get(rowKey.getBytes());// 根据rowKey查询
             Result r = table.get(scan);
             sysInfo(r);
@@ -110,10 +109,9 @@ public class HbaseUtils {
     /**
      * 单条件按查询，查询多条记录
      */
-    public static void queryByCondition(String column, String value, String tableName) {
+    public static void queryByCondition(String column, String value, TableName tableName) {
         try {
-            HTable table = new HTable(configuration, tableName);
-            ;
+            Table table = conn.getTable(tableName);
             Filter filter = new SingleColumnValueFilter(Bytes
                     .toBytes(column), null, CompareFilter.CompareOp.EQUAL, Bytes
                     .toBytes(value)); // 当列column的值为value时进行查询
@@ -134,9 +132,9 @@ public class HbaseUtils {
     /**
      * 组合条件查询
      */
-    public static void queryByCondition(List<String> columms, List<String> values, String tableName) {
+    public static void queryByCondition(List<String> columms, List<String> values, TableName tableName) {
         try {
-            HTable table = new HTable(configuration, tableName);
+            Table table = conn.getTable(tableName);
             List<Filter> filters = new ArrayList<Filter>();
             for (int i = 0; i < columms.size(); i++) {
                 Filter filter = new SingleColumnValueFilter(Bytes
@@ -172,6 +170,7 @@ public class HbaseUtils {
     }
 
     public static void main(String[] args) {
-        dropTable("big_log_201606");
+        dropTable(TableName.valueOf("big_log_201606"));
+        dropTable(TableName.valueOf("big_log_201607"));
     }
 }

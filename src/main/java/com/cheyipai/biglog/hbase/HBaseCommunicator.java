@@ -8,9 +8,7 @@ import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.TableName;
-import org.apache.hadoop.hbase.client.HBaseAdmin;
-import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,16 +26,17 @@ public class HBaseCommunicator implements Serializable {
     static final Logger LOG = LoggerFactory.getLogger(HBaseCommunicator.class);
 
     private static Configuration conf;
-    private HTable table = null;
-    private HBaseAdmin admin = null;
+    private Admin admin = null;
+    private Connection conn;
 
     /**
      * 初始化
      */
     public HBaseCommunicator() {
-        this.conf = HBaseConfiguration.create();
         try {
-            admin = new HBaseAdmin(conf);
+            this.conf = HBaseConfiguration.create();
+            this.conn = ConnectionFactory.createConnection(conf);
+            admin = conn.getAdmin();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -49,12 +48,12 @@ public class HBaseCommunicator implements Serializable {
      * @param tableName
      * @param colFamilies
      */
-    private final void createTable(final String tableName, final ArrayList<String> colFamilies) {
+    private final void createTable(final TableName tableName, final ArrayList<String> colFamilies) {
         try {
             if (admin.tableExists(tableName)) {
                 return;
             }
-            HTableDescriptor desc = new HTableDescriptor(TableName.valueOf(tableName));
+            HTableDescriptor desc = new HTableDescriptor(tableName);
             for (String family : colFamilies) {
                 HColumnDescriptor meta = new HColumnDescriptor(family.getBytes());
                 desc.addFamily(meta);
@@ -69,7 +68,7 @@ public class HBaseCommunicator implements Serializable {
 
     public final void addRow(Entity t) {
         try {
-            table = new HTable(conf, getNowTName());
+            Table table = conn.getTable(getNowTName());
             Put put = constructRow(t);
             table.put(put);
         } catch (IOException e) {
@@ -118,8 +117,8 @@ public class HBaseCommunicator implements Serializable {
      *
      * @return
      */
-    String getNowTName() {
-        return table_name_prefix + DateUtils.getMonthDate();
+    TableName getNowTName() {
+        return TableName.valueOf(table_name_prefix + DateUtils.getMonthDate());
     }
 
     /**
@@ -156,8 +155,8 @@ public class HBaseCommunicator implements Serializable {
                 ArrayList<String> colFamilies = Lists.newArrayList();
                 colFamilies.add(row_family);
                 colFamilies.add(col_family);
-                createTable(table_name, colFamilies);
-                createTable(table_name_next, colFamilies);
+                createTable(TableName.valueOf(table_name), colFamilies);
+                createTable(TableName.valueOf(table_name_next), colFamilies);
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
