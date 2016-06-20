@@ -9,7 +9,8 @@ import org.apache.storm.generated.StormTopology;
 import org.apache.storm.topology.TopologyBuilder;
 import org.apache.storm.utils.Utils;
 
-import static com.cheyipai.biglog.utils.Global.*;
+import static com.cheyipai.biglog.utils.Global.boltName;
+import static com.cheyipai.biglog.utils.Global.spoutName;
 import static com.cheyipai.biglog.utils.Prop.*;
 
 public class LogTopology {
@@ -34,14 +35,14 @@ public class LogTopology {
 
     public static void start(String[] args) throws Exception {
         Config config = buildConfig();
-        if (args != null && args.length > 0) {
-            StormSubmitter.submitTopology(args[0], config, buildTopology());
-        } else {
+        if (args != null && args.length > 0 && args[0].equals("local")) {
             LocalCluster cluster = new LocalCluster();
             cluster.submitTopology(topologyName, config, buildTopology());
             Utils.sleep(10 * 60 * 1000); // 10 mins
             cluster.killTopology(topologyName);
             cluster.shutdown();
+        } else {
+            StormSubmitter.submitTopology(topologyName, config, buildTopology());
         }
     }
 }
