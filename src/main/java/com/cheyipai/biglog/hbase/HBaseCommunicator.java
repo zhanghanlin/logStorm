@@ -7,6 +7,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
+import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Put;
@@ -30,6 +31,9 @@ public class HBaseCommunicator implements Serializable {
     private HTable table = null;
     private HBaseAdmin admin = null;
 
+    /**
+     * 初始化
+     */
     public HBaseCommunicator() {
         this.conf = HBaseConfiguration.create();
         try {
@@ -40,29 +44,17 @@ public class HBaseCommunicator implements Serializable {
     }
 
     /**
-     * check if the table exists
-     */
-    final boolean tableExists(final String tableName) {
-        try {
-            if (admin.tableExists(tableName)) {
-                return true;
-            }
-        } catch (Exception e) {
-            LOG.error("exception while checking table's existence! error : {}", e.getMessage(), e);
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    /**
-     * creates a table
+     * 创建一个Table
+     *
+     * @param tableName
+     * @param colFamilies
      */
     private final void createTable(final String tableName, final ArrayList<String> colFamilies) {
         try {
-            if (tableExists(tableName)) {
+            if (admin.tableExists(tableName)) {
                 return;
             }
-            HTableDescriptor desc = new HTableDescriptor(tableName);
+            HTableDescriptor desc = new HTableDescriptor(TableName.valueOf(tableName));
             for (String family : colFamilies) {
                 HColumnDescriptor meta = new HColumnDescriptor(family.getBytes());
                 desc.addFamily(meta);
@@ -103,7 +95,7 @@ public class HBaseCommunicator implements Serializable {
     }
 
     /**
-     * bolt初始化创建表
+     * Bolt初始化创建表
      */
     public final void boltCreateTable() {
         createLock.lock();
@@ -130,6 +122,9 @@ public class HBaseCommunicator implements Serializable {
         return table_name_prefix + DateUtils.getMonthDate();
     }
 
+    /**
+     * 定时器
+     */
     class TableTimer {
         public void showTimer() {
             TimerTask task = new TimerTask() {
@@ -148,7 +143,6 @@ public class HBaseCommunicator implements Serializable {
             Date date = calendar.getTime();
             Timer timer = new Timer();
             timer.schedule(task, date);
-//            timer.schedule(task, 10000);
         }
 
         /**

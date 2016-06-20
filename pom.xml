@@ -14,8 +14,6 @@
         <plugin.shade.verison>1.4</plugin.shade.verison>
         <fastjson.version>1.2.6</fastjson.version>
         <spring.version>4.2.5.RELEASE</spring.version>
-        <slf4j-log4j12.version>1.7.7</slf4j-log4j12.version>
-        <logback.version>1.1.1</logback.version>
         <storm.version>1.0.0</storm.version>
         <kafka.version>0.8.2.2</kafka.version>
         <hbase-client.version>1.2.0</hbase-client.version>
@@ -83,16 +81,6 @@
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>ch.qos.logback</groupId>-->
-            <!--<artifactId>logback-classic</artifactId>-->
-            <!--<version>${logback.version}</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.slf4j</groupId>-->
-            <!--<artifactId>slf4j-log4j12</artifactId>-->
-            <!--<version>${slf4j-log4j12.version}</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
