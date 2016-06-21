@@ -30,7 +30,7 @@ public class Prop {
     public static Integer spoutNum;
     public static Integer boltNum;
     public static boolean isDebug;
-    public static boolean isLocalMode;
+    public static boolean isLocalMode = false;  //默认非本地
     public static Integer taskParallelism;
     public static Integer workerNum;    //集群中分配多少个进程来运行这个拓扑
 
@@ -46,7 +46,6 @@ public class Prop {
         spoutNum = Integer.valueOf(getConfig("storm.spout.num"));
         boltNum = Integer.valueOf(getConfig("storm.bolt.num"));
         isDebug = Boolean.valueOf(getConfig("storm.debug"));
-        isLocalMode = Boolean.valueOf(getConfig("storm.localmode"));
         taskParallelism = Integer.valueOf(getConfig("storm.max.taskParallelism"));
         workerNum = Integer.valueOf(getConfig("storm.worker.num"));
     }

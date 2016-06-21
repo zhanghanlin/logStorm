@@ -95,6 +95,14 @@
         </dependency>
     </dependencies>
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/profile/${deploy.type}</directory>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
             <!-- Compiler 插件, 设定JDK版本 -->
             <plugin>
@@ -164,4 +172,18 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <deploy.type>dev</deploy.type>
+            </properties>
+        </profile>
+        <profile>
+            <id>product</id>
+            <properties>
+                <deploy.type>product</deploy.type>
+            </properties>
+        </profile>
+    </profiles>
 </project>

@@ -33,9 +33,9 @@ public class LogTopology {
         return conf;
     }
 
-    public static void start(String[] args) throws Exception {
+    public static void start() throws Exception {
         Config config = buildConfig();
-        if (args != null && args.length > 0 && args[0].equals("local")) {
+        if (isLocalMode) {
             LocalCluster cluster = new LocalCluster();
             cluster.submitTopology(topologyName, config, buildTopology());
             Utils.sleep(10 * 60 * 1000); // 10 mins

@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+    <property>
+        <name>hbase.cluster.distributed</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hbase.master</name>
+        <value>hdfs://192.168.109.11:60000</value>
+    </property>
+    <property>
+        <name>hbase.rootdir</name>
+        <value>hdfs://192.168.109.11:8020/hbase</value>
+    </property>
+    <property>
+        <name>hbase.master.info.bindAddress</name>
+        <value>0.0.0.0</value>
+    </property>
+    <property>
+        <name>hbase.regionserver.info.bindAddress</name>
+        <value>0.0.0.0</value>
+    </property>
+    <property>
+        <name>hbase.zookeeper.quorum</name>
+        <value>192.168.109.11</value>
+    </property>
+    <property>
+        <name>fs.hdfs.impl.disable.cach</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>fs.hdfs.impl</name>
+        <value>org.apache.hadoop.hdfs.DistributedFileSystem</value>
+        <description>The FileSystem for hdfs: uris.</description>
+    </property>
+</configuration>
