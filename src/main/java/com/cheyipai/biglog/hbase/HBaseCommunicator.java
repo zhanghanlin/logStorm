@@ -91,7 +91,7 @@ public class HBaseCommunicator implements Serializable {
      */
     private final Put constructRow(Entity t) {
         Put put = new Put(Bytes.toBytes(t.getRowKey()));
-        for (Map.Entry<String, List<String>> entry : t.getFamily().entrySet()) {
+        for (Map.Entry<String, List<String>> entry : t.familyArray().entrySet()) {
             String columnFamily = entry.getKey();
             for (String f : entry.getValue()) {
                 put.addColumn(Bytes.toBytes(columnFamily), Bytes.toBytes(f), Bytes.toBytes(t.get(f).toString()));

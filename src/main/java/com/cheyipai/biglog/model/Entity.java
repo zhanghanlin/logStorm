@@ -25,11 +25,11 @@ public abstract class Entity implements Serializable {
         return BeanUtils.getBeanValue(field, this);
     }
 
-    public List<String> getFields() {
+    public List<String> beanFields() {
         return BeanUtils.getBeanField(this.getClass());
     }
 
-    public List<Object> getValues() {
+    public List<Object> beanValues() {
         return BeanUtils.getBeanValue(this);
     }
 
@@ -37,7 +37,7 @@ public abstract class Entity implements Serializable {
      * Bean的列族数据,包含列族中的列
      * @return
      */
-    public abstract Map<String,List<String>> getFamily();
+    public abstract Map<String,List<String>> familyArray();
 
     public String toJson() {
         return JSONObject.toJSONString(this);

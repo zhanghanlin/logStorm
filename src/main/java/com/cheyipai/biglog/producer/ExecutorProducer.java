@@ -6,10 +6,6 @@ import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
@@ -39,7 +35,7 @@ public class ExecutorProducer {
     /**
      * 集合数量
      */
-    static int count = 10;
+    static int count = 1;
 
     public static void main(String[] args) {
         ExecutorProducer test = new ExecutorProducer();
@@ -57,9 +53,30 @@ public class ExecutorProducer {
     void init() throws UnknownHostException {
         InetAddress s = InetAddress.getLocalHost();
         for (int i = 0; i < count; i++) {
-            BigLog log = new BigLog("app-" + (i + 1), "1", UUID.randomUUID().toString().substring(0, 8),
-                    (new Date()).getTime(), "{\"key\":\"testkey " + i + "\",\"value\":\"testvalue " + i + "\"}", 1,
-                    s.getHostName(), s.getHostAddress());
+            BigLog log = new BigLog();
+            log.setApp("app-" + i);
+            log.setClientId("clientId-" + i);
+            log.setClientType("PC");
+            log.setContent("{\"key\":\"testkey " + i + "\",\"value\":\"testvalue " + i + "\"}");
+            log.setException("");
+            log.setLine("1000" + i);
+            log.setLogTime((new Date()).getTime() + "");
+            log.setLogVersion("1.2.7");
+            log.setRequestBody("param=" + i);
+            log.setRequestHeader("GET http://test.cheyipai.com/get \n" +
+                    "Host: test.cheyipai.com \n" +
+                    "Accept:*/* \n" +
+                    "Pragma: no-cache \n" +
+                    "Cache-Control: no-cache \n" +
+                    "Referer: http://test.cheyipai.com/ \n" +
+                    "User-Agent:Mozilla/4.04[en](Win95;I;Nav) \n" +
+                    "Range:bytes=554554- ");
+            log.setResponseCode("200");
+            log.setServerIp(s.getHostAddress());
+            log.setServerName(s.getHostName());
+            log.setServiceName("get");
+            log.setTraceId("traceId-" + i);
+            log.setUserId(UUID.randomUUID().toString().substring(0, 8));
             list.add(log);
         }
     }
@@ -72,28 +89,7 @@ public class ExecutorProducer {
                 @Override
                 public void run() {
                     try {
-                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                        ObjectOutput out = null;
-                        byte[] testData_bytes = null;
-                        try {
-                            out = new ObjectOutputStream(bos);
-                            out.writeObject(l);
-                            testData_bytes = bos.toByteArray();
-                        } finally {
-                            try {
-                                if (out != null) {
-                                    out.close();
-                                }
-                            } catch (IOException ex) {
-                                // ignore close exception
-                            }
-                            try {
-                                bos.close();
-                            } catch (IOException ex) {
-                                // ignore close exception
-                            }
-                        }
-                        KeyedMessage<String, byte[]> data = new KeyedMessage(topic, testData_bytes);
+                        KeyedMessage<String, byte[]> data = new KeyedMessage(topic, l.toJson().getBytes());
                         producer.send(data);
                     } catch (Exception e) {
                         e.printStackTrace();

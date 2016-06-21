@@ -1,8 +1,9 @@
 package com.cheyipai.biglog.storm;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cheyipai.biglog.model.BigLog;
 import com.cheyipai.biglog.utils.BeanUtils;
-import com.cheyipai.biglog.utils.Convert;
 import org.apache.storm.spout.Scheme;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Values;
@@ -20,11 +21,11 @@ public class LogScheme implements Scheme {
     @Override
     public List<Object> deserialize(ByteBuffer buffer) {
         byte[] bytes = Utils.toByteArray(buffer);
-        Object obj = Convert.byte2Object(bytes);
-        if (obj instanceof BigLog) {
-            return new Values(BeanUtils.getBeanValue(obj).toArray());
-        } else {
-            LOG.error("Object is not an instance of BigLog.");
+        try {
+            BigLog log = JSONObject.toJavaObject(JSON.parseObject(new String(bytes)), BigLog.class);
+            return new Values(log.beanValues().toArray());
+        } catch (Exception e) {
+            LOG.error("Object is not an instance of BigLog. {}", e.getMessage(), e);
             return null;
         }
     }
