@@ -165,7 +165,7 @@ public class BigLog extends Entity {
 
     @Override
     public String getRowKey() {
-        return userId + logTime + line + app;
+        return userId + logTime + line;
     }
 
     @Override
