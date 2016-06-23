@@ -15,9 +15,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HbaseUtils {
+public class HbaseExample {
 
-    static final Logger LOG = LoggerFactory.getLogger(HbaseUtils.class);
+    static final Logger LOG = LoggerFactory.getLogger(HbaseExample.class);
 
     static Configuration configuration = HBaseConfiguration.create();
 
@@ -162,9 +162,11 @@ public class HbaseUtils {
         sb.append(new String(result.getRow()));
         for (Cell cell : result.rawCells()) {
             sb.append(",column:");
-            sb.append(new String(cell.getQualifier()));
+            String qualifier = Bytes.toString(cell.getQualifierArray(), cell.getQualifierOffset(), cell.getQualifierLength());
+            sb.append(qualifier);
             sb.append(",value:");
-            sb.append(new String(cell.getValue()));
+            String value = Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength());
+            sb.append(value);
         }
         LOG.info(sb.toString());
     }

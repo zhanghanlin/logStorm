@@ -35,4 +35,13 @@ public class DateUtils {
         SimpleDateFormat format = new SimpleDateFormat(pattern);
         return format.format(calendar.getTime());
     }
+
+    /**
+     * 获取当前月表名
+     * @param prefix    表前缀
+     * @return
+     */
+    public static String getNowTName(String prefix) {
+        return prefix + getMonthDate();
+    }
 }

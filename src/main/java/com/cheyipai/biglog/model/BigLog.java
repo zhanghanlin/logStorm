@@ -165,7 +165,7 @@ public class BigLog extends Entity {
 
     @Override
     public String getRowKey() {
-        return userId + logTime + line;
+        return userId + logTime;
     }
 
     @Override
@@ -175,8 +175,8 @@ public class BigLog extends Entity {
         List<String> colCols = Lists.newArrayList();
         rowCols.add("userId");
         rowCols.add("logTime");
-        rowCols.add("line");
 
+        colCols.add("line");
         colCols.add("app");
         colCols.add("logVersion");
         colCols.add("traceId");
