@@ -33,7 +33,7 @@ public class LogTopology {
         return conf;
     }
 
-    public static void start() throws Exception {
+    public static void start(String topologyName) throws Exception {
         Config config = buildConfig();
         if (isLocalMode) {
             LocalCluster cluster = new LocalCluster();
