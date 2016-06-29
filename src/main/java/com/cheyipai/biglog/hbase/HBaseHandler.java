@@ -1,6 +1,6 @@
 package com.cheyipai.biglog.hbase;
 
-import com.cheyipai.biglog.model.Entity;
+import com.cheyipai.biglog.model.DataModel;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.TableName;
@@ -14,10 +14,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import static com.cheyipai.biglog.utils.Global.hbase_family;
 
 /**
  * HBase工具
@@ -57,34 +58,20 @@ public class HBaseHandler {
     }
 
     /**
-     * 根据Bean格式Put
+     * 新增数据
      *
-     * @param t
-     * @return
+     * @param model
      */
-    public static Put constructRow(Entity t) {
-        Put put = new Put(Bytes.toBytes(t.getRowKey()));
-        for (Map.Entry<String, List<String>> entry : t.familyArray().entrySet()) {
-            String columnFamily = entry.getKey();
-            for (String f : entry.getValue()) {
-                put.addColumn(Bytes.toBytes(columnFamily),
-                        Bytes.toBytes(f), Bytes.toBytes(t.get(f).toString()));
-            }
-        }
-        return put;
-    }
-
-    /**
-     * 新增列
-     *
-     * @param t
-     * @param tableName
-     */
-    public static void addRow(Connection conn, Entity t, String tableName) {
+    public static void addRow(Connection conn, DataModel model) {
         Table table = null;
         try {
-            table = conn.getTable(TableName.valueOf(tableName));
-            Put put = constructRow(t);
+            table = conn.getTable(model.getTable());
+            Put put = new Put(Bytes.toBytes(model.getRowKey()));
+            for (Map.Entry<String, Object> entry : model.getData().entrySet()) {
+                put.addColumn(Bytes.toBytes(hbase_family),
+                        Bytes.toBytes(entry.getKey()),
+                        Bytes.toBytes(entry.getValue().toString()));
+            }
             table.put(put);
         } catch (IOException e) {
             e.printStackTrace();

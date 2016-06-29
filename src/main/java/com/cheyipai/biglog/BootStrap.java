@@ -15,7 +15,7 @@ public class BootStrap {
 
     public static void main(String[] args) {
         try {
-            LOG.info("start begin...");
+            LOG.info("BootStrap start...");
             String topologyName = Prop.topologyName;
             if (args != null && args.length > 1) {
                 if (args.length > 0) {
@@ -25,14 +25,16 @@ public class BootStrap {
                     isLocalMode = Boolean.valueOf(args[1]);
                 }
             }
-            LOG.info("isLocalMode : {}", isLocalMode);
-            ApplicationContext instance =
-                    new ClassPathXmlApplicationContext("applicationContext.xml");
+            LOG.info("topologyName : {} , isLocalMode : {}", topologyName, isLocalMode);
+            //获取Spring配置
+            ApplicationContext instance = new ClassPathXmlApplicationContext("applicationContext.xml");
+            //调用定时器
             instance.getBean("tableTimer");
+            //启动Topo
             LogTopology.start(topologyName);
-            LOG.info("start success!");
+            LOG.info("BootStrap success!");
         } catch (Exception e) {
-            LOG.error("start exception : {}", e.getMessage(), e);
+            LOG.error("BootStrap exception : {}", e.getMessage(), e);
             e.printStackTrace();
         }
     }

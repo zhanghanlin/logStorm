@@ -1,28 +1,23 @@
 package com.cheyipai.biglog.bolt;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cheyipai.biglog.hbase.HBaseCommunicator;
-import com.cheyipai.biglog.model.BigLog;
-import com.cheyipai.biglog.utils.BeanUtils;
-import com.cheyipai.biglog.utils.Convert;
-import com.cheyipai.biglog.utils.DateUtils;
+import com.cheyipai.biglog.model.DataModel;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.IRichBolt;
 import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-import static com.cheyipai.biglog.utils.Global.table_name_prefix;
+import static com.cheyipai.biglog.utils.Global.fields;
 
 public class LogHBaseBolt implements IRichBolt {
 
     private static final long serialVersionUID = 8259058888219739163L;
-
-    private static final Logger LOG = LoggerFactory.getLogger(LogHBaseBolt.class);
 
     private OutputCollector collector;
     private HBaseCommunicator communicator;
@@ -36,10 +31,10 @@ public class LogHBaseBolt implements IRichBolt {
     @Override
     public void execute(Tuple tuple) {
         try {
-            BigLog bigLog = Convert.tuple2Bean(tuple, new BigLog());
-            communicator.addRow(bigLog, DateUtils.getNowTName(table_name_prefix));
+            JSONObject object = JSONObject.parseObject(tuple.getValueByField(fields).toString());
+            communicator.addRow(JSON.toJavaObject(object, DataModel.class));
         } catch (Exception e) {
-            LOG.error("Exception insert HBase table! error : {} ", e.getMessage(), e);
+            e.printStackTrace();
             this.collector.fail(tuple);
             return;
         }
@@ -52,7 +47,7 @@ public class LogHBaseBolt implements IRichBolt {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields(BeanUtils.getBeanField(BigLog.class)));
+        declarer.declare(new Fields(fields));
     }
 
     @Override

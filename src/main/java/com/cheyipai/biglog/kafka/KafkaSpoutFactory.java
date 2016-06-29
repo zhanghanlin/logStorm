@@ -12,27 +12,46 @@ import java.util.List;
 
 import static com.cheyipai.biglog.utils.Prop.*;
 
+/**
+ * Kafka
+ */
 public class KafkaSpoutFactory {
 
     private SpoutConfig spoutConfig;
     private KafkaSpout kafkaSpout;
 
+    /**
+     * Kafka配置
+     */
     private KafkaSpoutFactory() {
         BrokerHosts brokerHosts = new ZkHosts(zkHosts);
         spoutConfig = new SpoutConfig(brokerHosts, topic, zkRoot, spoutId);
         spoutConfig.scheme = new SchemeAsMultiScheme(new LogScheme());
-        spoutConfig.ignoreZkOffsets = true;
+        /**
+         * true - 则每次拓扑重新启动时，都会从开头读取消息
+         * false - 第一次启动，从开头读取，之后的重启均是从offset中读取
+         */
+        spoutConfig.ignoreZkOffsets = false;
 
-        //将offset汇报到哪个zk集群,相应配置
+        //使用zk记录storm的offset信息
         List<String> zkServers = Lists.newArrayList(zkOffsetHosts);
         spoutConfig.zkServers = zkServers;
         spoutConfig.zkPort = zkOffsetPort;
-
-        spoutConfig.startOffsetTime = 0l;//zk OffsetRequest.LatestTime();
+        /**
+         * OffsetRequest.LatestTime() - 从最新的开始读
+         * OffsetRequest.EarliestTime() - 从头开始读
+         * 0L   - 从ZK记录的Offset读
+         */
+        spoutConfig.startOffsetTime = 0L;
         kafkaSpout = new KafkaSpout(spoutConfig);
     }
 
+    /**
+     * 获取Kafka对象实例
+     *
+     * @return
+     */
     public static KafkaSpout getInstance() {
-        return new KafkaSpoutFactory().kafkaSpout;
+        return (new KafkaSpoutFactory()).kafkaSpout;
     }
 }

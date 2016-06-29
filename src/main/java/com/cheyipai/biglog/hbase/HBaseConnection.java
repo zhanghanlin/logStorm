@@ -7,6 +7,9 @@ import org.apache.hadoop.hbase.client.ConnectionFactory;
 
 import java.io.IOException;
 
+/**
+ * HBase Connection
+ */
 public class HBaseConnection {
 
     private static Connection conn;

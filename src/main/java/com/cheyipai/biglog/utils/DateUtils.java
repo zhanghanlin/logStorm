@@ -25,7 +25,7 @@ public class DateUtils {
 
     public static String getMonthDate(int month) {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH,month);
+        calendar.add(Calendar.MONTH, month);
         SimpleDateFormat format = new SimpleDateFormat(formatPattern_month);
         return format.format(calendar.getTime());
     }
@@ -34,14 +34,5 @@ public class DateUtils {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat format = new SimpleDateFormat(pattern);
         return format.format(calendar.getTime());
-    }
-
-    /**
-     * 获取当前月表名
-     * @param prefix    表前缀
-     * @return
-     */
-    public static String getNowTName(String prefix) {
-        return prefix + getMonthDate();
     }
 }

@@ -11,11 +11,12 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import static com.cheyipai.biglog.utils.Global.*;
 
+/**
+ * 定时器,用于定时创建HBaseTable
+ */
 @Component
 public class TableTimer {
 
@@ -52,6 +53,7 @@ public class TableTimer {
         calendar.set(year, month, day, 23, 55, 00);
         Date date = calendar.getTime();
         Timer timer = new Timer();
+        //间隔24H执行一次
         timer.schedule(task, date, 24 * 60 * 60 * 1000);
     }
 
@@ -61,13 +63,16 @@ public class TableTimer {
     void createTask() {
         try {
             LOG.info("timer - createTable begin ...");
-            String table_name = table_name_prefix + DateUtils.getMonthDate();
-            String table_name_next = table_name_prefix + DateUtils.getMonthDate(1);
-            ArrayList<String> colFamilies = Lists.newArrayList(row_family, col_family);
+            //当月Table
+            String table_name = hbase_table_prefix + DateUtils.getMonthDate();
+            //预创建下月Table
+            String table_name_next = hbase_table_prefix + DateUtils.getMonthDate(1);
+            ArrayList<String> colFamilies = Lists.newArrayList(hbase_family);
             HBaseHandler.createTable(admin, table_name, colFamilies);
             HBaseHandler.createTable(admin, table_name_next, colFamilies);
             LOG.info("timer - createTable end ...");
         } catch (Exception e) {
+            LOG.error("createTask error : {}", e.getMessage(), e);
             e.printStackTrace();
         }
     }

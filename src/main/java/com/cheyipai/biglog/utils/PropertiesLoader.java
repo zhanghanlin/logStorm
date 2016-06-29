@@ -27,10 +27,6 @@ public class PropertiesLoader {
         properties = loadProperties(resourcesPaths);
     }
 
-    public Properties getProperties() {
-        return properties;
-    }
-
     /**
      * 取出Property，但以System的Property优先,取不到返回空字符串.
      */

@@ -1,6 +1,6 @@
 package com.cheyipai.biglog.hbase;
 
-import com.cheyipai.biglog.model.Entity;
+import com.cheyipai.biglog.model.DataModel;
 import com.cheyipai.biglog.utils.DateUtils;
 import com.google.common.collect.Lists;
 import org.apache.hadoop.hbase.client.Admin;
@@ -10,10 +10,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import static com.cheyipai.biglog.utils.Global.col_family;
-import static com.cheyipai.biglog.utils.Global.row_family;
-import static com.cheyipai.biglog.utils.Global.table_name_prefix;
+import static com.cheyipai.biglog.utils.Global.*;
 
+/**
+ * HBase
+ */
 public class HBaseCommunicator implements Serializable {
 
     private static final long serialVersionUID = -247440075453438034L;
@@ -47,18 +48,17 @@ public class HBaseCommunicator implements Serializable {
      * 初始化创建Table
      */
     public void initCreateTable() {
-        ArrayList<String> colFamilies = Lists.newArrayList(row_family, col_family);
-        String tableName = DateUtils.getNowTName(table_name_prefix);
+        ArrayList<String> colFamilies = Lists.newArrayList(hbase_family);
+        String tableName = hbase_table_prefix + DateUtils.getMonthDate();
         HBaseHandler.createTable(admin, tableName, colFamilies);
     }
 
     /**
      * 新增列
      *
-     * @param t
-     * @param tableName
+     * @param model
      */
-    public final void addRow(Entity t, String tableName) {
-        HBaseHandler.addRow(conn, t, tableName);
+    public final void addRow(DataModel model) {
+        HBaseHandler.addRow(conn, model);
     }
 }
